@@ -1,0 +1,300 @@
+{
+    "info": {
+        "_postman_id": "c86e7a55-8ec0-4a8a-9b8b-1e2f3d4c5b6a",
+        "name": "ClimbLearn SaaS 2.0 (Security & Pulse)",
+        "description": "API for ClimbLearn with Admin JWT Security, Client API Key protection, and Real-time Pulse integration.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "00. Auth (Admin Security)",
+            "item": [
+                {
+                    "name": "Admin Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"password\": \"admin123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Authenticates the admin and returns a JWT token. Store this token in the 'adminToken' variable for use in '02. Admin Monitoring' requests."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "01. AI Learning Flow (Client/Student)",
+            "item": [
+                {
+                    "name": "1. Start Flow (Welcoming)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{clientApiKey}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"externalStudentId\": \"STU_SAAS_001\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/ai/flow/start",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ai",
+                                "flow",
+                                "start"
+                            ]
+                        },
+                        "description": "Initializes the session and triggers the Welcoming stage. **Required Head**: `x-api-key`."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Ready Check (AreYouReady)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{clientApiKey}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"sessionId\": \"{{sessionId}}\",\n    \"input\": {\n        \"text\": \"Evet Hazırım\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/ai/flow/next",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ai",
+                                "flow",
+                                "next"
+                            ]
+                        },
+                        "description": "Sends 'Evet Hazırım' response. **Required Header**: `x-api-key`."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "3. Topic & Name Initiation",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{clientApiKey}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"sessionId\": \"{{sessionId}}\",\n    \"input\": {\n        \"topic\": \"Temel İlk Yardım Eğitimi\",\n        \"name\": \"Öğrenci\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/ai/flow/next",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ai",
+                                "flow",
+                                "next"
+                            ]
+                        },
+                        "description": "Sets the topic and name. This triggers the split (Separation) and starts the first lesson. **Required Header**: `x-api-key`."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "4. Learning Interaction (Loop)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{clientApiKey}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"sessionId\": \"{{sessionId}}\",\n    \"input\": {\n        \"text\": \"TYD'de ilk kural sakin kalmaktır.\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/ai/flow/next",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ai",
+                                "flow",
+                                "next"
+                            ]
+                        },
+                        "description": "Submits a learning interaction. **Required Header**: `x-api-key`."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "02. Admin Monitoring (Dashboard Logs)",
+            "item": [
+                {
+                    "name": "Get Session History",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/ai?sessionId={{sessionId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ai"
+                            ],
+                            "query": [
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves logs for a session. **Required Header**: `Bearer <adminToken>`."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Manual Log (Maintenance)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"sessionId\": \"{{sessionId}}\",\n    \"type\": \"explanation\",\n    \"prompt\": \"Manual test prompt\",\n    \"response\": \"Manual test response\",\n    \"model\": \"gpt-4o\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/ai",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "ai"
+                            ]
+                        },
+                        "description": "Creates a manual log entry. **Required Header**: `Bearer <adminToken>`."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "03. Real-time Pulse (WebSocket)",
+            "item": [
+                {
+                    "name": "Monitor Live Dashboard Events",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "ws://localhost:5000",
+                            "protocol": "ws",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000"
+                        },
+                        "description": "How to listen for real-time events:\n\n1. Use a Socket.io client (Postman supports this) to connect to `ws://localhost:5000`.\n2. **Emit** event: `join_admin_room` with no arguments.\n3. **Listen** for event: `new_interaction` - you will receive a JSON payload with the interaction log whenever a student makes a move."
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:5000/api",
+            "type": "string"
+        },
+        {
+            "key": "sessionId",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "adminToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "clientApiKey",
+            "value": "cl_client_key_998877",
+            "type": "string"
+        }
+    ]
+}

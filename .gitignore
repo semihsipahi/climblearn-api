@@ -27,4 +27,3 @@ logs/
 # Project Specific
 .agent/
 .gemini/
-ClimbLearn_API.postman_collection.json_backup

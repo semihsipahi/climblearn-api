@@ -47,9 +47,7 @@ const { protectAdmin, protectClient } = require('../../auth/middleware/authMiddl
  *       201:
  *         description: Log created
  */
-router.route('/')
-    .get(protectAdmin, getLogs)
-    .post(protectAdmin, createLog);
+router.route('/').get(protectAdmin, getLogs).post(protectAdmin, createLog);
 
 /**
  * @swagger
@@ -67,6 +65,7 @@ router.route('/')
  *             type: object
  *             properties:
  *               externalStudentId: { type: string, example: "STU_001" }
+ *               studentName: { type: string, example: "Semih" }
  *     responses:
  *       201:
  *         description: Session started
@@ -99,12 +98,13 @@ router.post('/flow/start', protectClient, startFlow);
  *             required: [sessionId]
  *             properties:
  *               sessionId: { type: string }
- *               input:
+ *               inputs:
  *                 type: object
  *                 properties:
- *                   text: { type: string, example: "Evet Hazırım" }
+ *                   available: { type: string, example: "Evet Hazırım" }
  *                   topic: { type: string, example: "Temel İlk Yardım Eğitimi" }
  *                   name: { type: string, example: "Ahmet" }
+ *                   text: { type: string, example: "TYD'de ilk kural sakin kalmaktır." }
  *     responses:
  *       200:
  *         description: Next stage triggered

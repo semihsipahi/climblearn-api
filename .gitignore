@@ -4,7 +4,9 @@ node_modules/
 /build
 
 # IDE / Editors
-.vscode/
+# IDE / Editors
+.vscode/*
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo

@@ -21,7 +21,7 @@ app.use(express.json());
 
 // Basic Route
 app.get('/', (req, res) => {
-    res.json({ message: 'ClimbLearn API is running' });
+  res.json({ message: 'ClimbLearn API is running' });
 });
 
 // Routes
@@ -30,16 +30,15 @@ app.use('/api', require('./src/routes'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-    console.error('SERVER ERROR:', err);
-    res.status(500).json({
-        message: err.message,
-        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-    });
+  console.error('SERVER ERROR:', err);
+  res.status(500).json({
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+  });
 });
-
 
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

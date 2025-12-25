@@ -1,0 +1,66 @@
+# IMPLEMENTATION GUIDE: ClimbLearn AI Learning Flow Integration
+
+Bu belge, yenilenen ClimbLearn-API sistemini Front-End (Avatar/E-Learning) tarafına entegre etmek için hazırlanmıştır. Sistem, Dify AI Workflow'larını bir "Aşama (Stage)" yönetim sistemiyle orkestre eder.
+
+## 1. Genel Mimari
+Eski sistem doğrudan Dify ile konuşurken, yeni sistem tüm zekayı ve aşama yönetimini backend tarafında toplar. Front-End sadece iki ana endpoint ve JSON objeleriyle etkileşime girer.
+
+- **Endpointler**: `/api/ai/flow/start` ve `/api/ai/flow/next`
+- **Güvenlik**: Her istekte `x-api-key: {{clientApiKey}}` header'ı zorunludur.
+- **Session**: Tüm akış bir `sessionId` üzerinden takip edilir. LocalStorage veya State içinde saklanmalıdır.
+
+## 2. Akış Adımları ve Payload Yapıları
+
+### ADIM 1: Oturum Başlatma (Start Flow)
+Öğrenci arayüze girdiğinde veya avatar "Merhaba" demek istediğinde tetiklenir.
+- **Endpoint**: `POST /api/ai/flow/start`
+- **Body**: `{ "externalStudentId": "STU_123", "studentName": "Semih" }`
+- **Süreç**: Sistem `welcoming` aşamasını tamamlar ve avatarın ilk selamlama metnini döner.
+- **Dönen Stage**: `ready_check`
+
+### ADIM 2: Hazırlık Kontrolü (Ready Check)
+- **Endpoint**: `POST /api/ai/flow/next`
+- **Body**: 
+  ```json
+  {
+      "sessionId": "...",
+      "inputs": { "available": "Evet hazırım" }
+  }
+  ```
+- **Dönen Stage**: `topic_init`
+
+### ADIM 3: Konu ve İsim Belirleme (Topic Initiation)
+- **Endpoint**: `POST /api/ai/flow/next`
+- **Body**: 
+  ```json
+  {
+      "sessionId": "...",
+      "inputs": { 
+          "topic": "İlk Yardım", 
+          "name": "Semih" 
+      }
+  }
+  ```
+- **Önemli**: Bu adımdan sonra sistem otomatik olarak `separation` (konu bölme) aşamasını çalıştırır ve sana **ilk soruyu** döner.
+- **Dönen Stage**: `learning`
+
+### ADIM 4: Eğitim Döngüsü (Learning Interaction Loop)
+Eğitim tamamlanana kadar bu adım tekrarlanır.
+- **Endpoint**: `POST /api/ai/flow/next`
+- **Body**: 
+  ```json
+  {
+      "sessionId": "...",
+      "inputs": { "text": "Öğrencinin sesli veya yazılı cevabı" }
+  }
+  ```
+- **Dönen Veri**: `{ text, stage, score, status }`
+- **Status**: `retry` gelirse puan düşük demektir ve avatar konuyu tekrar anlatır. `completed` gelene kadar devam edilir.
+
+## 3. Mock Sistemi (Geliştirme Kolaylığı)
+`.env` dosyasında ilgili aşamanın Dify API anahtarı boşsa, sistem `src/modules/ai/mocks/` klasöründeki JSON dosyalarından cevap döner. Bu sayede Dify tarafındaki flow'lar hazır olmasa bile Front-End tarafında avatarın tüm aşamalardaki davranışlarını (hizalama, seslendirme, animasyon) test edebilirsiniz.
+
+## 4. Avatar ve Ses Entegrasyonu İçin Notlar
+- Gelen her `text` cevabı avatarın seslendirme (TTS) motoruna gönderilmeli ve avatarın dudak senkronizasyonu (lip-sync) tetiklenmelidir.
+- Response içindeki `stage` bilgisine göre UI tarafında görsel değişiklikler (konu başlıkları, ilerleme çubuğu vb.) yapılabilir.
+- `nextStep` loglarını console'dan takip ederek verinin yapısını (available, topic, name, text) kontrol edebilirsiniz.

@@ -7,7 +7,7 @@ ClimbLearn is an AI-driven adaptive learning platform that integrates with Dify 
 ## 🚀 Features
 
 - **Dynamic AI Flow**: Intelligent state transitions (Welcoming -> Ready Check -> Topic Initiation -> Learning Loop).
-- **Dual-Layer Security**: 
+- **Dual-Layer Security**:
   - **Admin JWT Auth**: Protects administrative logs and dashboards.
   - **Client API Key**: Secures student-facing AI flow endpoints.
 - **Real-time Pulse**: Live interaction broadcasting via **Socket.io** for concurrent admin monitoring.
@@ -29,11 +29,14 @@ ClimbLearn is an AI-driven adaptive learning platform that integrates with Dify 
 ## ⚙️ Installation & Setup
 
 ### 1. Requirements
+
 - Node.js installed.
 - MongoDB running locally or on Atlas.
 
 ### 2. Environment Variables (`.env`)
+
 Create a `.env` file in the root directory:
+
 ```env
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/climblearn_db
@@ -50,20 +53,22 @@ DIFY_KEY_READY_CHECK=...
 ```
 
 ### 3. Run
+
 ```bash
 npm install
 npm start
 ```
+
 Access Swagger UI at: `http://localhost:5000/api-docs`
 
 ---
 
 ## 🔒 Security Architecture
 
-| Access Level | Protected By | Header | Description |
-|---|---|---|---|
-| **Admin** | JWT Token | `Authorization: Bearer <token>` | Access to student logs & live analytics |
-| **Client/App** | Static Key | `x-api-key: <key>` | Access to AI Learning Flow endpoints |
+| Access Level   | Protected By | Header                          | Description                             |
+| -------------- | ------------ | ------------------------------- | --------------------------------------- |
+| **Admin**      | JWT Token    | `Authorization: Bearer <token>` | Access to student logs & live analytics |
+| **Client/App** | Static Key   | `x-api-key: <key>`              | Access to AI Learning Flow endpoints    |
 
 ---
 
@@ -72,25 +77,29 @@ Access Swagger UI at: `http://localhost:5000/api-docs`
 The system moves through the following stages automatically:
 
 ### 1. **Welcoming** (`/flow/start`)
+
 - Initial greeting.
 - **Input**: `externalStudentId`.
 - **Dify Flow**: Real (Cloud).
 
 ### 2. **Ready Check** (`/flow/next`)
+
 - Verifies if the student is focused and ready to start.
 - **Input**: `{"text": "Evet Hazırım"}`.
 - **Dify Flow**: Real (Cloud).
 
 ### 3. **Topic & Name Initiation** (`/flow/next`)
+
 - Sets the subject and registers the student's name.
 - **Input**: `{"topic": "...", "name": "..."}`.
 - **Dify Flow**: Mock Fallback.
 - **Result**: Generates 5 sub-topics using `<topics>` tags for frontend categorization.
 
 ### 4. **Learning Loop** (`/flow/next`)
+
 - **Step A (Question)**: AI asks a question about the current sub-topic.
 - **Step B (Evaluation)**: AI scores the answer (4-10 scale).
-- **Step C (Transition)**: 
+- **Step C (Transition)**:
   - Score >= 5: Moves to the next sub-topic.
   - Score < 5: Triggers **Re-Lesson** (AI explains the topic again).
 

@@ -23,25 +23,25 @@ const mongoose = require('mongoose');
  */
 
 const aiInteractionLogSchema = new mongoose.Schema({
-    sessionId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'AILearningSession',
-        required: true,
-        index: true
-    },
+  sessionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'AILearningSession',
+    required: true,
+    index: true,
+  },
 
-    type: {
-        type: String,
-        enum: ['explanation', 'question', 'evaluation'],
-    },
+  type: {
+    type: String,
+    enum: ['explanation', 'question', 'evaluation'],
+  },
 
-    prompt: String,
-    response: String,
+  prompt: String,
+  response: String,
 
-    model: String,
-    difyFlowId: String,
+  model: String,
+  difyFlowId: String,
 
-    createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('AIInteractionLog', aiInteractionLogSchema);
